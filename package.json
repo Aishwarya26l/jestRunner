@@ -2,11 +2,12 @@
   "name": "jestrunner",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "example.js",
   "scripts": {
     "test": "jest --colors | aha",
     "test-json": "jest --colors --json",
-    "coverage": "jest --coverage --colors |& aha > /tmp/coverage.txt "
+    "coverage": "jest --coverage --colors |& aha > /tmp/example/coverage.txt ",
+    "jsonCoverage": "jest --coverage --json "
   },
   "author": "Aishwarya",
   "license": "ISC",

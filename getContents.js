@@ -1,7 +1,7 @@
 //getContents.js
 
-function getContents(){
-    const indexPage=`<html>
+function getContents() {
+  const indexPage = `<html>
   <head>
     <meta charset="utf-8" />
     <meta
@@ -53,7 +53,7 @@ function getContents(){
             </md-card-header>
             <md-card-content>
               <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-33">
                   <md-field>
                     <label>example.js</label>
                     <md-textarea
@@ -62,12 +62,21 @@ function getContents(){
                     ></md-textarea>
                   </md-field>
                 </div>
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-33">
                   <md-field>
                     <label>example.test.js</label>
                     <md-textarea
                       style="min-height:250px;"
                       v-model="editableBlock"
+                    ></md-textarea>
+                  </md-field>
+                </div>
+                <div class="md-layout-item md-size-33">
+                  <md-field>
+                    <label>config (npm test / npm run coverage)</label>
+                    <md-textarea
+                      style="min-height:250px;"
+                      v-model="hiddenBlock"
                     ></md-textarea>
                   </md-field>
                 </div>
@@ -86,7 +95,7 @@ function getContents(){
               <md-field>
                 <md-tabs>
                   <md-tab id="tab-htmlResults" md-label="HTML results">
-                    <div v-html="answer.htmlFeedback"></div>
+                    <div class="output-tab" v-html="answer.htmlFeedback"></div>
                   </md-tab>
                   <md-tab id="tab-jsonResults" md-label="JSON results">
                     <md-textarea
@@ -122,7 +131,7 @@ function getContents(){
         isCorrectColor: "#ff5252",
         shownBlock:
           "//example.js \\n function sum(a, b) {\\n if (a==b){\\n a=b;\\n }\\n else{\\n a=a;\\n }\\n return a + b;\\n }\\n module.exports = sum;",
-        hiddenBlock: "",
+        hiddenBlock: "npm run coverage",
         editableBlock:
           '//example.test.js \\n const sum = require("./example");\\n\\n test("adds 1 + 2 to equal 3", () => {\\n  expect(sum(1, 2)).toBe(4);\\n });',
         answer: ""
@@ -142,7 +151,8 @@ function getContents(){
             body: JSON.stringify({
               userToken: "ABCDE",
               shown: { 0: this.shownBlock },
-              editable: { 0: this.editableBlock }
+              editable: { 0: this.editableBlock },
+              hidden: { 0: this.hiddenBlock }
             })
           })
             .then(response => {
@@ -176,10 +186,10 @@ function getContents(){
       height: 100%;
     }
     .md-tab {
-      min-height: 500px;
+      min-height: 800px;
     }
     .md-content {
-      min-height: 500px;
+      min-height: 800px;
     }
     .md-card {
       overflow: hidden;
@@ -187,12 +197,11 @@ function getContents(){
     .input-card {
       height: 350px;
     }
-    .output-tab {
-      min-height: 400px !important;
-    }
+
     .output-card > .md-card > .md-card-content > .md-field {
       padding-top: 0px;
     }
+
     .button {
       display: inline-block;
       border-radius: 4px;
@@ -230,11 +239,13 @@ function getContents(){
     .hidden {
       display: none;
     }
+    .output-tab {
+      min-height: 1000px !important;
+    }
   </style>
 </html>
-
-`
-    return indexPage;
+`;
+  return indexPage;
 }
 
 module.exports = getContents;

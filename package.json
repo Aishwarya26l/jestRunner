@@ -1,0 +1,20 @@
+{
+  "name": "jestrunner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --colors | aha",
+    "test-json": "jest --colors --json",
+    "coverage": "jest --coverage --colors |& aha > /tmp/coverage.txt "
+  },
+  "author": "Aishwarya",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^24.9.0",
+    "jest-cli": "^24.9.0"
+  },
+  "devDependencies": {
+    "jest-standard-reporter": "^1.0.1"
+  }
+}

@@ -9,6 +9,7 @@
     "coverage": "jest --coverage --colors |& aha > /tmp/example/coverage.txt ",
     "jsonCoverage": "jest --coverage --json "
   },
+  "jest": {},
   "author": "Aishwarya",
   "license": "ISC",
   "dependencies": {

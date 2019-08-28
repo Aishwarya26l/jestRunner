@@ -1,7 +1,8 @@
 //getContents.js
 
 function getContents() {
-  const indexPage = `<html>
+  const indexPage = `
+  <html>
   <head>
     <meta charset="utf-8" />
     <meta
@@ -20,9 +21,67 @@ function getContents() {
       rel="stylesheet"
       href="https://unpkg.com/vue-material@beta/dist/theme/default.css"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css" />
   </head>
-  <body>
+    <body>
     <div id="app">
+      <h1>Javascript Testing Activity</h1>
+        <md-tabs>
+          <md-tab v-for="question in questions" :key=question.name v-bind:md-label=question.name+question.status>
+            <jest-activity v-bind:layout-things=question.layoutItems v-bind:question-name=question.name  @questionhandler="toggleQuestionStatus"/>
+          </md-tab>
+        </md-tabs>
+      </div>
+    </body> 
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-material@beta"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+    <script>
+    Vue.use(VueMaterial.default)
+    Vue.component('jest-activity', {
+        props: ['layoutThings', 'questionName'],
+        data: function () {
+            return {
+            answer:"",
+            layoutItems: this.layoutThings,
+            isHidden: true,
+            submitText: "Submit",
+            isCorrectColor: "#ff5252"
+        }
+        },
+        methods: {
+            postContents: function () {
+            // comment: leaving the gatewayUrl empty - API will post back to itself
+            const gatewayUrl = '';
+            this.submitText = "Loading...";
+            this.answer = "";
+            this.isHidden = true;
+            fetch(gatewayUrl, {
+        method: "POST",
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({userToken: "ABCDE", shown:{0:this.layoutItems[0].vModel},editable:{0:this.layoutItems[1].vModel},hidden: {0: this.layoutItems[2].vModel}})
+        }).then(response => {
+            return response.json()
+        }).then(data => {
+            this.answer = JSON.parse(JSON.stringify(data));
+              this.isHidden = false;
+              this.submitText = "Submit";
+              if (this.answer && this.answer.isComplete) {
+                this.isCorrectColor = "green";
+              } else {
+                this.isCorrectColor = "#ff5252";
+              }
+            return this.$emit('questionhandler',{data, questionName:this.questionName})
+            })
+         }
+        },
+        template:  
+        \`
       <div class="md-layout">
         <div class="md-layout-item md-size-100">
           <md-card class="input-card">
@@ -30,12 +89,7 @@ function getContents() {
               <md-card-header-text>
                 <div class="md-layout md-gutter">
                   <div class="md-layout-item md-size-50">
-                    <div class="md-title">
-                      Jest Runner - Let's test your JS code.
-                    </div>
-                  </div>
-                  <div class="md-layout-item md-size-50">
-                    <button class="button" id="submit" v-on:click="staygo">
+                    <button class="button" id="submit" v-on:click="postContents">
                       <span>{{ submitText }}</span>
                     </button>
                     <button
@@ -54,31 +108,35 @@ function getContents() {
             <md-card-content>
               <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-33">
-                  <md-field>
-                    <label>example.js</label>
-                    <md-textarea
+                  <div style="border: 1px solid #eeeeee">
+                    <label><b>example.js</b></label>
+                    <textarea
+                      class="shownTextarea"
                       style="min-height:250px;"
-                      v-model="shownBlock"
-                    ></md-textarea>
-                  </md-field>
+                      v-model="layoutItems[0].vModel"
+                    ></textarea>
+                  </div>
                 </div>
                 <div class="md-layout-item md-size-33">
-                  <md-field>
-                    <label>example.test.js</label>
-                    <md-textarea
+                  <div style="border: 1px solid #eeeeee">
+                    <label><b>example.test.js</b></label>
+                    <textarea
+                      class="editableTextarea"
                       style="min-height:250px;"
-                      v-model="editableBlock"
-                    ></md-textarea>
-                  </md-field>
+                      v-model="layoutItems[1].vModel"
+                    ></textarea>
+                  </div>
                 </div>
                 <div class="md-layout-item md-size-33">
-                  <md-field>
-                    <label>config (npm test / npm run coverage)</label>
-                    <md-textarea
+                  <div style="border: 1px solid #eeeeee">
+                    <label><b>config</b></label>
+                    <textarea
+                      class="hiddenTextarea"
                       style="min-height:250px;"
-                      v-model="hiddenBlock"
-                    ></md-textarea>
-                  </md-field>
+                      v-model="layoutItems[2].vModel"
+                      readonly
+                    ></textarea>
+                  </div>
                 </div>
               </div>
             </md-card-content>
@@ -117,64 +175,83 @@ function getContents() {
           </md-card>
         </div>
       </div>
-    </div>
-  </body>
-  <script src="https://unpkg.com/vue"></script>
-  <script src="https://unpkg.com/vue-material@beta"></script>
-  <script>
-    Vue.use(VueMaterial.default);
+    \`
+    })
     new Vue({
       el: "#app",
-      data: {
-        isHidden: true,
-        submitText: "Submit",
-        isCorrectColor: "#ff5252",
-        shownBlock:
-          "//example.js \\n function sum(a, b) {\\n if (a==b){\\n a=b;\\n }\\n else{\\n a=a;\\n }\\n return a + b;\\n }\\n module.exports = sum;",
-        hiddenBlock: "npm run coverage",
-        editableBlock:
-          '//example.test.js \\n const sum = require("./example");\\n\\n test("adds 1 + 2 to equal 3", () => {\\n  expect(sum(1, 2)).toBe(4);\\n });',
-        answer: ""
+      data: function () {
+            return {
+            questions:[
+                {name:"question 1", layoutItems: [
+                {vModel:"//example.js \\n function sum(a, b) {\\n if (a==b){\\n a=b;\\n }\\n else{\\n a=a;\\n }\\n return a + b;\\n }\\n module.exports = sum;"},
+                {vModel:\`//example.test.js \\n const sum = require("./example");\\n\\n test("adds 1 + 2 to equal 3", () => {\\n  expect(sum(1, 2)).toBe(4);\\n });\`},
+                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" },\\n  "jest":{\\n    "coverageThreshold":{\\n      "global":{\\n        "branches":10,\\n        "functions":10,\\n        "lines":10,\\n        "statements":0\\n      }\\n    }\\n  }\\n}\`}                
+                ], status:" 🔴"},
+                {name:"question 2", layoutItems: [
+                {vModel:"//example.js \\n function multiply(a, b) {\\n return a + b;\\n }\\n module.exports = multiply;"},
+                {vModel:\`//example.test.js \\n const multiply = require("./example");\\n\\n test("multiply 2 and 2 to equal 4", () => {\\n  expect(multiply(2, 2)).toBe(4);\\n });\`},
+                {vModel:\`{\\n  "scripts":{ "test":"jest" }\\n}\`}                
+                ], status:" 🔴"},    
+                {name:"question 3", layoutItems: [
+                {vModel:"//example.js \\n function map(a, b) {\\n return a.map(item => item + 2);\\n }\\n module.exports = map;"},
+                {vModel:\`//example.test.js \\n const map = require("./example");\\n\\n test("map([1,2]) to equal [2,4]", () => {\\n  expect(map([1,2])).toStrictEqual([2,4]);\\n });\`},
+                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" }\\n}\`}                
+                ], status:" 🔴"},
+                {name:"question 4", layoutItems: [
+                {vModel:"//example.js \\n function filter(a, b) {\\n return a.filter(item => item === 0);\\n }\\n module.exports = filter;"},
+                {vModel:\`//example.test.js \\n const filter = require("./example");\\n\\n test("filter([1,2],2) to equal [2]", () => {\\n  expect(filter([1,2],2)).toBe([2]);\\n });\`},
+                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" },\\n  "jest":{\\n    "coverageThreshold":{\\n      "global":{\\n        "branches":80,\\n        "functions":80,\\n        "lines":80,\\n        "statements":80\\n      }\\n    }\\n  }\\n}\`}                
+                ], status:" 🔴"},
+                {name:"question 5", layoutItems: [
+                {vModel:"//example.js \\n function reduce(a, b) {\\n return a.reduce((item, accumulator) => item);\\n }\\n module.exports = reduce;"},
+                {vModel:\`//example.test.js \\n const reduce = require("./example");\\n\\n test("reduce([1,2]) to equal 3", () => {\\n  expect(reduce([1,2]).toBe(3);\\n });\`},
+                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" }\\n}\`}                
+                ], status:" 🔴"}  
+                ]
+            }
       },
       methods: {
-        staygo: function() {
-          const gatewayUrl = "";
-          this.submitText = "Loading";
-          this.isHidden = true;
-          this.answer = "";
-          fetch(gatewayUrl, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              userToken: "ABCDE",
-              shown: { 0: this.shownBlock },
-              editable: { 0: this.editableBlock },
-              hidden: { 0: this.hiddenBlock }
-            })
-          })
-            .then(response => {
-              return response.json();
-            })
-            .then(data => {
-              this.answer = JSON.parse(JSON.stringify(data));
-              this.isHidden = false;
-              this.submitText = "Submit";
-              if (this.answer && this.answer.isComplete) {
-                this.isCorrectColor = "green";
-              } else {
-                this.isCorrectColor = "#ff5252";
-              }
-            });
+        toggleQuestionStatus (response) {
+          const {data, questionName} = response
+          if (data.isComplete) {
+            this.questions.find(item => item.name === questionName).status = " ✔️";
+            
+          }
+          else {
+          this.questions.find(item => item.name === questionName).status = " 🔴";
+          }
         }
-      }
+      }       
     });
+  </script>
+  <script>
+  var shownTextareas = document.getElementsByClassName("shownTextarea");
+  var editableTextareas = document.getElementsByClassName("editableTextarea");
+  var hiddenTextareas = document.getElementsByClassName("hiddenTextarea");
+  var index;
+  for(index = 0; index < shownTextareas.length; index++){
+      CodeMirror.fromTextArea(shownTextareas[index],{
+          lineNumbers: true,
+          mode:  "javascript"
+        });
+  }
+  for(index = 0; index < editableTextareas.length; index++){
+      CodeMirror.fromTextArea(editableTextareas[index],{
+          lineNumbers: true,
+          mode:  "javascript"
+        });
+  }
+  for(index = 0; index < hiddenTextareas.length; index++){
+      CodeMirror.fromTextArea(hiddenTextareas[index],{
+          lineNumbers: true,
+          mode:  "javascript"
+        });
+  }
   </script>
   <style lang="scss" scoped>
     textarea {
       font-size: 1rem !important;
+      height: 100%;
     }
     .md-card-header {
       padding-top: 0px;
@@ -182,26 +259,21 @@ function getContents() {
     .md-tabs {
       width: 100%;
     }
-    .md-tabs-container .md-tab textarea {
-      height: 100%;
-    }
     .md-tab {
       min-height: 800px;
     }
     .md-content {
-      min-height: 800px;
+      min-height: 1200px !important;
     }
     .md-card {
       overflow: hidden;
     }
     .input-card {
-      height: 350px;
+      height: 400px;
     }
-
     .output-card > .md-card > .md-card-content > .md-field {
       padding-top: 0px;
     }
-
     .button {
       display: inline-block;
       border-radius: 4px;
@@ -241,6 +313,20 @@ function getContents() {
     }
     .output-tab {
       min-height: 1000px !important;
+    }
+    h1{
+        margin-top: 1rem;
+        padding:20px;
+        text-align: center
+    }  
+    pre {
+      height: auto;
+      max-height: 100%;
+      overflow: auto;
+      background-color: #ffffff;
+      word-break: normal !important;
+      word-wrap: normal !important;
+      white-space: pre !important;
     }
   </style>
 </html>

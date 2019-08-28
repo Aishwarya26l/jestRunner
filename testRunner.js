@@ -1,10 +1,46 @@
-// include node fs module
-const fs = require("fs");
 //testRunner.js
+// include node fs module
+
+const fs = require("fs");
 const systemSync = require("./executeShellCommand");
 
-function testRunner(shownCode, editedCode, hiddenCode) {
+function updatePackageConfig(configContents) {
+  let packageConfigContents = JSON.parse(
+    systemSync("cat /tmp/example/package.json")
+  );
+  if (configContents["jest"]) {
+    //contains jest configurations
+    packageConfigContents["jest"] = configContents["jest"];
+  }
+  if (configContents["scripts"]["test"]) {
+    if (configContents["scripts"]["test"].trim() === "jest") {
+      return "npm test";
+    } else if (configContents["scripts"]["test"].includes("coverage")) {
+      return "npm run coverage";
+    } else {
+      return "npm test";
+    }
+  } else {
+    return "npm test";
+  }
+}
+
+function initialSetup() {
   systemSync("mkdir -p /tmp/example/node_modules");
+  //Copy over related project files
+  //-u, --update copy only when the SOURCE file is newer than the destination file
+  //or when the destination file is missing
+  systemSync("cp -r -u /var/task/node_modules/* /tmp/example/node_modules");
+  systemSync(
+    "cp -r -u /var/task/node_modules/.bin /tmp/example/node_modules/.bin"
+  );
+  systemSync("cp -r -u /var/task/package.json /tmp/example/package.json");
+  systemSync("cp -r -u /var/task/jest.config.js /tmp/example/jest.config.js");
+}
+
+function testRunner(shownCode, editedCode, hiddenCode) {
+  //Setup the lambda environment
+  initialSetup();
 
   // writeFileSync function with filename, content and callback function
   fs.writeFileSync("/tmp/example/example.js", shownCode, function(err) {
@@ -17,16 +53,10 @@ function testRunner(shownCode, editedCode, hiddenCode) {
     console.log("File is created successfully.");
   });
 
-  //Copy over related project files
-  systemSync("cp -r /var/task/node_modules/* /tmp/example/node_modules");
-  systemSync(
-    "cp -r /var/task/node_modules/.bin /tmp/example/node_modules/.bin"
-  );
-  systemSync("cp -r /var/task/package.json /tmp/example/package.json");
-  systemSync("cp -r /var/task/jest.config.js /tmp/example/jest.config.js");
+  let configContents =
+    typeof hiddenCode === "string" ? JSON.parse(hiddenCode) : hiddenCode;
 
-  console.log(systemSync("ls -la /tmp/example"));
-  console.log(systemSync("ls -la /tmp/example/node_modules/.bin"));
+  let toTest = updatePackageConfig(configContents);
 
   let allFeedback = {
     isCorrect: false,
@@ -35,7 +65,7 @@ function testRunner(shownCode, editedCode, hiddenCode) {
     textFeedback: "Default output"
   };
 
-  switch (hiddenCode.split("\n")[0].trim()) {
+  switch (toTest) {
     case "npm test":
       let npmTest = "cd /tmp/example; CI=true npm test";
       let npmTestResults = systemSync(npmTest);

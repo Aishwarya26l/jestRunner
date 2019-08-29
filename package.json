@@ -9,7 +9,18 @@
     "coverage": "jest --coverage --colors |& aha > /tmp/example/coverage.txt ",
     "jsonCoverage": "jest --coverage --json "
   },
-  "jest": {},
+  "jest": {
+    "verbose": true,
+    "rootDir": "/tmp/example",
+    "reporters": [
+      "jest-standard-reporter"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.[jt]s?(x)",
+      "**/?(*.)+(spec|test).[jt]s?(x)"
+    ],
+    "coverageDirectory": "/tmp/example"
+  },
   "author": "Aishwarya",
   "license": "ISC",
   "dependencies": {

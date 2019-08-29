@@ -10,7 +10,17 @@ function updatePackageConfig(configContents) {
   );
   if (configContents["jest"]) {
     //contains jest configurations
-    packageConfigContents["jest"] = configContents["jest"];
+    Object.keys(configContents["jest"]).forEach(function(key, index) {
+      packageConfigContents["jest"][key] = configContents["jest"][key];
+    });
+    fs.writeFileSync(
+      "/tmp/example/package.json",
+      JSON.stringify(packageConfigContents),
+      function(err) {
+        if (err) throw err;
+        console.log("File is created successfully.");
+      }
+    );
   }
   if (configContents["scripts"]["test"]) {
     if (configContents["scripts"]["test"].trim() === "jest") {
@@ -35,7 +45,7 @@ function initialSetup() {
     "cp -r -u /var/task/node_modules/.bin /tmp/example/node_modules/.bin"
   );
   systemSync("cp -r -u /var/task/package.json /tmp/example/package.json");
-  systemSync("cp -r -u /var/task/jest.config.js /tmp/example/jest.config.js");
+  //systemSync("cp -r -u /var/task/jest.config.js /tmp/example/jest.config.js");
 }
 
 function testRunner(shownCode, editedCode, hiddenCode) {

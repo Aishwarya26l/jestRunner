@@ -25,7 +25,11 @@ function getContents() {
   </head>
     <body>
     <div id="app">
-      <h1>Javascript Testing Activity</h1>
+        <div class="md-layout">
+          <div class="md-layout-item">
+            <h1 style="padding: 0px;">Javascript Activity : Edit the tests to increase code coverage</h1>
+          </div>
+        </div>
         <md-tabs>
           <md-tab v-for="question in questions" :key=question.name v-bind:md-label=question.name+question.status>
             <jest-activity v-bind:layout-things=question.layoutItems v-bind:question-name=question.name  @questionhandler="toggleQuestionStatus"/>
@@ -38,6 +42,7 @@ function getContents() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.10.2/beautify.min.js"></script>
     <script>
     Vue.use(VueMaterial.default)
     Vue.component('jest-activity', {
@@ -109,21 +114,21 @@ function getContents() {
               <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-33">
                   <div style="border: 1px solid #eeeeee">
-                    <label><b>example.js</b></label>
+                    <label><b>[Edit your code] : example.test.js</b></label>
                     <textarea
-                      class="shownTextarea"
+                      class="editableTextarea"
                       style="min-height:250px;"
-                      v-model="layoutItems[0].vModel"
+                      v-model="layoutItems[1].vModel"
                     ></textarea>
                   </div>
                 </div>
                 <div class="md-layout-item md-size-33">
                   <div style="border: 1px solid #eeeeee">
-                    <label><b>example.test.js</b></label>
+                    <label><b>example.js</b></label>
                     <textarea
-                      class="editableTextarea"
+                      class="shownTextarea"
                       style="min-height:250px;"
-                      v-model="layoutItems[1].vModel"
+                      v-model="layoutItems[0].vModel"
                     ></textarea>
                   </div>
                 </div>
@@ -183,29 +188,29 @@ function getContents() {
             return {
             questions:[
                 {name:"question 1", layoutItems: [
-                {vModel:"//example.js \\n function sum(a, b) {\\n if (a==b){\\n a=b;\\n }\\n else{\\n a=a;\\n }\\n return a + b;\\n }\\n module.exports = sum;"},
-                {vModel:\`//example.test.js \\n const sum = require("./example");\\n\\n test("adds 1 + 2 to equal 3", () => {\\n  expect(sum(1, 2)).toBe(4);\\n });\`},
-                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" },\\n  "jest":{\\n    "coverageThreshold":{\\n      "global":{\\n        "branches":10,\\n        "functions":10,\\n        "lines":10,\\n        "statements":0\\n      }\\n    }\\n  }\\n}\`}                
+                {vModel: js_beautify("//example.js \\nfunction sum(a, b){\\n if (a==b){\\n a=b;\\n }\\n else{\\n a=a;\\n }\\n return a + b;\\n }\\n module.exports = sum;")},
+                {vModel: js_beautify(\`//example.test.js \\n const sum = require("./example");\\n\\ntest("adds 1 + 2 to equal 3", () => {\\n expect(sum(1, 2)).toBe(4);\\n });\`)},
+                {vModel: js_beautify(\`{\\n"scripts":{ "test":"jest --coverage" },\\n"jest":{\\n"coverageThreshold":{\\n"global":{\\n"branches":10,\\n"functions":10,\\n"lines":10,\\n"statements":0\\n}\\n}\\n}\\n}\`)}                
                 ], status:" 🔴"},
                 {name:"question 2", layoutItems: [
-                {vModel:"//example.js \\n function multiply(a, b) {\\n return a + b;\\n }\\n module.exports = multiply;"},
-                {vModel:\`//example.test.js \\n const multiply = require("./example");\\n\\n test("multiply 2 and 2 to equal 4", () => {\\n  expect(multiply(2, 2)).toBe(4);\\n });\`},
-                {vModel:\`{\\n  "scripts":{ "test":"jest" }\\n}\`}                
+                {vModel: js_beautify("//example.js \\n function multiply(a, b) {\\n return a + b;\\n }\\n module.exports = multiply;")},
+                {vModel: js_beautify(\`//example.test.js \\nconst multiply = require("./example");\\n\\n test("multiply 2 and 2 to equal 4", () => {\\n  expect(multiply(2, 2)).toBe(4);\\n });\`)},
+                {vModel: js_beautify(\`{\\n"scripts":{ "test":"jest --coverage" },\\n"jest":{\\n"coverageThreshold":{\\n"global":{\\n"branches":50,\\n"functions":10,\\n"lines":10,\\n"statements":0\\n}\\n}\\n}\\n}\`)}                
                 ], status:" 🔴"},    
                 {name:"question 3", layoutItems: [
-                {vModel:"//example.js \\n function map(a, b) {\\n return a.map(item => item + 2);\\n }\\n module.exports = map;"},
-                {vModel:\`//example.test.js \\n const map = require("./example");\\n\\n test("map([1,2]) to equal [2,4]", () => {\\n  expect(map([1,2])).toStrictEqual([2,4]);\\n });\`},
-                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" }\\n}\`}                
+                {vModel: js_beautify("//example.js \\n function map(a, b) {\\n return a.map(item => item + 2);\\n }\\n module.exports = map;")},
+                {vModel: js_beautify(\`//example.test.js \\n const map = require("./example");\\n\\n test("map([1,2]) to equal [2,4]", () => {\\n  expect(map([1,2])).toStrictEqual([2,4]);\\n });\`)},
+                {vModel: js_beautify(\`{\\n"scripts":{ "test":"jest --coverage" },\\n"jest":{\\n"coverageThreshold":{\\n"global":{\\n"branches":50,\\n"functions":20,\\n"lines":20,\\n"statements":20\\n}\\n}\\n}\\n}\`)}                
                 ], status:" 🔴"},
                 {name:"question 4", layoutItems: [
-                {vModel:"//example.js \\n function filter(a, b) {\\n return a.filter(item => item === 0);\\n }\\n module.exports = filter;"},
-                {vModel:\`//example.test.js \\n const filter = require("./example");\\n\\n test("filter([1,2],2) to equal [2]", () => {\\n  expect(filter([1,2],2)).toBe([2]);\\n });\`},
-                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" },\\n  "jest":{\\n    "coverageThreshold":{\\n      "global":{\\n        "branches":80,\\n        "functions":80,\\n        "lines":80,\\n        "statements":80\\n      }\\n    }\\n  }\\n}\`}                
+                {vModel: js_beautify("//example.js \\n function filter(a, b) {\\n return a.filter(item => item === 0);\\n }\\n module.exports = filter;")},
+                {vModel: js_beautify(\`//example.test.js \\n const filter = require("./example");\\n\\n test("filter([1,2],2) to equal [2]", () => {\\n  expect(filter([1,2],2)).toBe([2]);\\n });\`)},
+                {vModel: js_beautify(\`{\\n  "scripts":{ "test":"jest --coverage" },\\n"jest":{\\n"coverageThreshold":{\\n"global":{\\n"branches":50,\\n"functions":50,\\n"lines":50,\\n"statements":50\\n}\\n}\\n}\\n}\`)}                
                 ], status:" 🔴"},
                 {name:"question 5", layoutItems: [
-                {vModel:"//example.js \\n function reduce(a, b) {\\n return a.reduce((item, accumulator) => item);\\n }\\n module.exports = reduce;"},
-                {vModel:\`//example.test.js \\n const reduce = require("./example");\\n\\n test("reduce([1,2]) to equal 3", () => {\\n  expect(reduce([1,2]).toBe(3);\\n });\`},
-                {vModel:\`{\\n  "scripts":{ "test":"jest --coverage" }\\n}\`}                
+                {vModel: js_beautify("//example.js \\n function reduce(a, b) {\\n return a.reduce((item, accumulator) => item);\\n }\\n module.exports = reduce;")},
+                {vModel: js_beautify(\`//example.test.js \\n const reduce = require("./example");\\n\\n test("reduce([1,2]) to equal 3", () => {\\n expect(reduce([1,2])).toBe(3);\\n });\`)},
+                {vModel: js_beautify(\`{\\n"scripts":{ "test":"jest --coverage" },\\n"jest":{\\n"coverageThreshold":{\\n"global":{\\n "branches":80,\\n"functions":80,\\n"lines":80,\\n"statements":20\\n}\\n}\\n}\\n}\`)}                
                 ], status:" 🔴"}  
                 ]
             }
@@ -232,7 +237,8 @@ function getContents() {
   for(index = 0; index < shownTextareas.length; index++){
       CodeMirror.fromTextArea(shownTextareas[index],{
           lineNumbers: true,
-          mode:  "javascript"
+          mode:  "javascript",
+          readOnly: true
         });
   }
   for(index = 0; index < editableTextareas.length; index++){
@@ -244,7 +250,8 @@ function getContents() {
   for(index = 0; index < hiddenTextareas.length; index++){
       CodeMirror.fromTextArea(hiddenTextareas[index],{
           lineNumbers: true,
-          mode:  "javascript"
+          mode:  "javascript",
+          readOnly: true
         });
   }
   </script>

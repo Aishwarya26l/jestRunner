@@ -190,23 +190,23 @@ function getContents() {
                   {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":100,"functions":100,"lines":100,"statements":100}}}}\`)}                
                 ], status:" 🔴"},
                 {name:"question 2", layoutItems: [
-                  {vModel: js_beautify(\`//example.js \\n function fizzBuzz(a){return"Fizz"}module.exports=fizzBuzz;\`)},
-                  {vModel: js_beautify(\`//example.test.js \\n const fizzBuzz=require("./example");test("Fizz for multiple of 3",()=>{expect(fizzBuzz(6)).toBe("Fizz")});\`)},  
+                  {vModel: js_beautify(\`//example.js \\n function isEven(a){if(a%2 == 0){return true}else{return false}}module.exports=isEven;\`)},
+                  {vModel: js_beautify(\`//example.test.js \\n const isEven=require("./example");test("2 is even = true",()=>{expect(isEven(2)).toBe(true)});\`)},  
                   {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":100,"functions":100,"lines":100,"statements":100}}}}\`)}
                 ], status:" 🔴"},    
                 {name:"question 3", layoutItems: [
-                  {vModel: js_beautify(\`//example.js \\n function isOdd(a){return true}module.exports=isOdd;\`)},
-                  {vModel: js_beautify(\`//example.test.js \\n const isOdd=require("./example");test("3 is Odd = true",()=>{expect(isOdd(3)).toBe(true)});\`)},  
-                  {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":100,"functions":100,"lines":100,"statements":100}}}}\`)}                
+                  {vModel: js_beautify(\`//example.js \\n function isPrime(num){let start=2;const limit=Math.sqrt(num);while(start <= limit){if(num % start++ < 1){return false;}}return num > 1;}module.exports=isPrime;\`)},
+                  {vModel: js_beautify(\`//example.test.js \\n const isPrime=require("./example");test("3 is prime = true",()=>{expect(isPrime(3)).toBe(true)});\`)},  
+                  {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":50,"functions":100,"lines":100,"statements":100}}}}\`)}                
                 ], status:" 🔴"},
                 {name:"question 4", layoutItems: [
-                  {vModel: js_beautify(\`//example.js \\n function isEqual(a,b){return false}module.exports=isEqual;\`)},
-                  {vModel: js_beautify(\`//example.test.js \\n const isEqual=require("./example");test("2 equals 2 = true",()=>{expect(isEqual(2,2)).toBe(true)});\`)},  
+                  {vModel: js_beautify(\`//example.js \\n function factorialCalc(num){let rval=1;for (let i = 2; i <= num; i++){rval *= i;}return rval;}module.exports=factorialCalc;\`)},
+                  {vModel: js_beautify(\`//example.test.js \\n const factorialCalc=require("./example");test("5! = 120",()=>{expect(factorialCalc(5)).toBe(120)});\`)},  
                   {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":100,"functions":100,"lines":100,"statements":100}}}}\`)}                
                 ], status:" 🔴"},
                 {name:"question 5", layoutItems: [
-                  {vModel: js_beautify(\`//example.js \\n function mapDouble(a){return a.map(item=>item+2)}module.exports=mapDouble;\`)},
-                  {vModel: js_beautify(\`//example.test.js \\n const mapDouble=require("./example");test("mapDouble([1,2]) to equal [2,4]",()=>{expect(mapDouble([1,2])).toStrictEqual([2,4])});\`)}, 
+                  {vModel: js_beautify(\`//example.js \\n function isEqual(a, b){return a==b?true:false}module.exports = isEqual;\`)},
+                  {vModel: js_beautify(\`//example.test.js \\n const isEqual=require("./example");test("2 equals 2 = true",()=>{expect(isEqual(2,2)).toBe(true)});\`)}, 
                   {vModel: js_beautify(\`{"scripts":{"test":"jest --coverage"},"jest":{"coverageThreshold":{"global":{"branches":100,"functions":100,"lines":100,"statements":100}}}}\`)}                 
                 ], status:" 🔴"}  
                 ]

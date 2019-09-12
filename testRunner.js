@@ -107,7 +107,7 @@ function testRunner(shownCode, editedCode, hiddenCode) {
       allFeedback = {
         isCorrect: finalnpmTestJSONResults.success,
         htmlFeedback: htmlResult,
-        jsonFeedback: JSON.stringify(finalnpmTestJSONResults, null, 2),
+        jsonFeedback: finalnpmTestJSONResults,
         textFeedback: textResults
       };
       break;
@@ -143,7 +143,7 @@ function testRunner(shownCode, editedCode, hiddenCode) {
       allFeedback = {
         isCorrect: finalnpmCoverageJSONResults.success,
         htmlFeedback: htmlNewResult,
-        jsonFeedback: JSON.stringify(finalnpmCoverageJSONResults, null, 2),
+        jsonFeedback: finalnpmCoverageJSONResults,
         textFeedback: textNewResults
       };
       break;
